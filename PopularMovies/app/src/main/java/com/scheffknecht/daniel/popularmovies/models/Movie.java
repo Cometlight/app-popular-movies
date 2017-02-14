@@ -1,5 +1,7 @@
 package com.scheffknecht.daniel.popularmovies.models;
 
+import com.google.gson.Gson;
+
 /**
  * Created by Daniel on 14.02.2017.
  */
@@ -31,6 +33,10 @@ public class Movie {
         this.popularity = popularity;
         this.vote_count = vote_count;
         this.vote_average = vote_average;
+    }
+
+    public static Movie fromJson(String json) {
+        return new Gson().fromJson(json, Movie.class);
     }
 
     public String getPoster_path() {
