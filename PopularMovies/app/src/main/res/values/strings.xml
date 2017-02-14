@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Popular Movies</string>
+    <string name="error_load_movies">Failed to load movies.</string>
 </resources>
