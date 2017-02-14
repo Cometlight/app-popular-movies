@@ -1,14 +1,22 @@
 package com.scheffknecht.daniel.popularmovies.network;
 
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
-import com.scheffknecht.daniel.popularmovies.R;
-import com.scheffknecht.daniel.popularmovies.activities.MainActivity;
+import java.util.Collection;
+import java.util.List;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonArray;
+import com.google.gson.reflect.TypeToken;
+import com.scheffknecht.daniel.popularmovies.models.Movie;
 
 import static android.content.ContentValues.TAG;
 
@@ -16,7 +24,7 @@ import static android.content.ContentValues.TAG;
  * Created by Daniel on 14.02.2017.
  */
 
-public class FetchPopularMoviesTask extends AsyncTask<Void, Void, String> {
+public class FetchPopularMoviesTask extends AsyncTask<Void, Void, List<Movie>> {
     private static final String MOVIEDB_MOVIE_POPULAR_BASE_URL = "https://api.themoviedb.org/3/movie/popular";
     private static final String API_KEY_PARAM = "api_key";
 
@@ -28,19 +36,17 @@ public class FetchPopularMoviesTask extends AsyncTask<Void, Void, String> {
     }
 
     @Override
-    protected String doInBackground(Void... params) {
+    protected List<Movie> doInBackground(Void... params) {
         URL movieRequestUrl = buildMostPopularMoviesRequestUrl();
 
+        List<Movie> movies = null;
         try {
             String jsonResponse = NetworkUtils.getResponseFromHttpUrl(movieRequestUrl);
-
-            Log.v(TAG, "contents of request: " + jsonResponse);
-
-            return null;
+            movies = getMoviesFromJsonResponse(jsonResponse);
         } catch (Exception e) {
-            Log.e(TAG, "doInBackground: TODO", e);
-            return null;
+            Log.e(TAG, "doInBackground: Failed to fetch movies", e);
         }
+        return movies;
     }
 
     private URL buildMostPopularMoviesRequestUrl() {
@@ -56,13 +62,33 @@ public class FetchPopularMoviesTask extends AsyncTask<Void, Void, String> {
             return null;
         }
 
-        Log.v(TAG, "Built URL " + url);
-
         return url;
     }
 
+    /**
+     * jsonResponse should look like this:
+     *   {
+     *     "page": 1,
+     *     "results": [
+     *       {
+     *         "poster_path": ...
+     *         ...
+     * @param jsonResponse the JSON from a get-popular-movies request
+     */
+    private List<Movie> getMoviesFromJsonResponse(String jsonResponse) {
+        JsonElement jsonElement = new JsonParser().parse(jsonResponse);
+        JsonObject jsonObject = jsonElement.getAsJsonObject();
+        JsonArray results = jsonObject.getAsJsonArray("results");
+        Gson gson = new Gson();
+
+        Type datasetListType = new TypeToken<Collection<Movie>>() {}.getType();
+        List<Movie> movies = gson.fromJson(results, datasetListType);
+
+        return movies;
+    }
+
     @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
+    protected void onPostExecute(List<Movie> movies) {
+        super.onPostExecute(movies);
     }
 }

@@ -1,50 +1,58 @@
 package com.scheffknecht.daniel.popularmovies.models;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by Daniel on 14.02.2017.
  */
 
 public class Movie {
-    private String poster_path;
+    @SerializedName("poster_path")
+    private String posterPath;
     private Boolean adult;
     private String overview;
-    private String release_date;
+    @SerializedName("release_date")
+    private String releaseDate;
     private Integer id;
-    private String original_title;
-    private String original_language;
-    private String backdrop_path;
+    @SerializedName("original_title")
+    private String originalTitle;
+    @SerializedName("original_language")
+    private String originalLanguage;
+    @SerializedName("backdrop_path")
+    private String backdropPath;
     private Float popularity;
-    private Integer vote_count;
-    private Float vote_average;
+    @SerializedName("vote_count")
+    private Integer voteCount;
+    @SerializedName("vote_average")
+    private Float voteAverage;
 
     public Movie() {}
 
-    public Movie(String poster_path, Boolean adult, String overview, String release_date, Integer id, String original_title, String original_language, String backdrop_path, Float popularity, Integer vote_count, Float vote_average) {
-        this.poster_path = poster_path;
+    public Movie(String posterPath, Boolean adult, String overview, String releaseDate, Integer id, String originalTitle, String originalLanguage, String backdropPath, Float popularity, Integer voteCount, Float voteAverage) {
+        this.posterPath = posterPath;
         this.adult = adult;
         this.overview = overview;
-        this.release_date = release_date;
+        this.releaseDate = releaseDate;
         this.id = id;
-        this.original_title = original_title;
-        this.original_language = original_language;
-        this.backdrop_path = backdrop_path;
+        this.originalTitle = originalTitle;
+        this.originalLanguage = originalLanguage;
+        this.backdropPath = backdropPath;
         this.popularity = popularity;
-        this.vote_count = vote_count;
-        this.vote_average = vote_average;
+        this.voteCount = voteCount;
+        this.voteAverage = voteAverage;
     }
 
     public static Movie fromJson(String json) {
         return new Gson().fromJson(json, Movie.class);
     }
 
-    public String getPoster_path() {
-        return poster_path;
+    public String getPosterPath() {
+        return posterPath;
     }
 
-    public void setPoster_path(String poster_path) {
-        this.poster_path = poster_path;
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
     }
 
     public Boolean getAdult() {
@@ -63,12 +71,12 @@ public class Movie {
         this.overview = overview;
     }
 
-    public String getRelease_date() {
-        return release_date;
+    public String getReleaseDate() {
+        return releaseDate;
     }
 
-    public void setRelease_date(String release_date) {
-        this.release_date = release_date;
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
     }
 
     public Integer getId() {
@@ -79,28 +87,28 @@ public class Movie {
         this.id = id;
     }
 
-    public String getOriginal_title() {
-        return original_title;
+    public String getOriginalTitle() {
+        return originalTitle;
     }
 
-    public void setOriginal_title(String original_title) {
-        this.original_title = original_title;
+    public void setOriginalTitle(String originalTitle) {
+        this.originalTitle = originalTitle;
     }
 
-    public String getOriginal_language() {
-        return original_language;
+    public String getOriginalLanguage() {
+        return originalLanguage;
     }
 
-    public void setOriginal_language(String original_language) {
-        this.original_language = original_language;
+    public void setOriginalLanguage(String originalLanguage) {
+        this.originalLanguage = originalLanguage;
     }
 
-    public String getBackdrop_path() {
-        return backdrop_path;
+    public String getBackdropPath() {
+        return backdropPath;
     }
 
-    public void setBackdrop_path(String backdrop_path) {
-        this.backdrop_path = backdrop_path;
+    public void setBackdropPath(String backdropPath) {
+        this.backdropPath = backdropPath;
     }
 
     public Float getPopularity() {
@@ -111,19 +119,19 @@ public class Movie {
         this.popularity = popularity;
     }
 
-    public Integer getVote_count() {
-        return vote_count;
+    public Integer getVoteCount() {
+        return voteCount;
     }
 
-    public void setVote_count(Integer vote_count) {
-        this.vote_count = vote_count;
+    public void setVoteCount(Integer voteCount) {
+        this.voteCount = voteCount;
     }
 
-    public Float getVote_average() {
-        return vote_average;
+    public Float getVoteAverage() {
+        return voteAverage;
     }
 
-    public void setVote_average(Float vote_average) {
-        this.vote_average = vote_average;
+    public void setVoteAverage(Float voteAverage) {
+        this.voteAverage = voteAverage;
     }
 }
