@@ -16,23 +16,37 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
+import com.scheffknecht.daniel.popularmovies.general.AsyncCallback;
 import com.scheffknecht.daniel.popularmovies.models.Movie;
 
 import static android.content.ContentValues.TAG;
 
 /**
  * Created by Daniel on 14.02.2017.
+ *
+ * Fetches and returns the most popular movies from moviedb.
+ * If the optional AsyncCallback is supplied via the constructor, its methods are called accordingly.
  */
-
 public class FetchPopularMoviesTask extends AsyncTask<Void, Void, List<Movie>> {
     private static final String MOVIEDB_MOVIE_POPULAR_BASE_URL = "https://api.themoviedb.org/3/movie/popular";
     private static final String API_KEY_PARAM = "api_key";
 
     private static final String MOVIEDB_API_KEY = "";
 
+    private AsyncCallback<List<Movie>> asyncCallback;
+
+    public FetchPopularMoviesTask() {}
+
+    public FetchPopularMoviesTask(AsyncCallback<List<Movie>> asyncCallback) {
+        this.asyncCallback = asyncCallback;
+    }
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        if (asyncCallback != null) {
+            asyncCallback.onPreExecute();
+        }
     }
 
     @Override
@@ -90,5 +104,8 @@ public class FetchPopularMoviesTask extends AsyncTask<Void, Void, List<Movie>> {
     @Override
     protected void onPostExecute(List<Movie> movies) {
         super.onPostExecute(movies);
+        if (asyncCallback != null) {
+            asyncCallback.onPostExecute(movies);
+        }
     }
 }
