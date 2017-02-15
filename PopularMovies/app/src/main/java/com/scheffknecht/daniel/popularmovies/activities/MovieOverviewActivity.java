@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,7 +22,7 @@ import com.scheffknecht.daniel.popularmovies.views.adapters.MovieAdapter;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MovieOverviewActivity extends AppCompatActivity {
     private TextView errorMessageDisplay;
     private ProgressBar loadingIndicator;
     private Spinner sortingSpinner;
@@ -99,9 +98,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) /* sort by popularity */ {
-                    Toast.makeText(MainActivity.this, "Sorting by Popularity", Toast.LENGTH_SHORT);// TODO
+                    Toast.makeText(MovieOverviewActivity.this, "Sorting by Popularity", Toast.LENGTH_SHORT);// TODO implement sorting
                 } else /* sort by rating */ {
-                    Toast.makeText(MainActivity.this, "Sorting by Rating", Toast.LENGTH_SHORT);//TODO
+                    Toast.makeText(MovieOverviewActivity.this, "Sorting by Rating", Toast.LENGTH_SHORT);//TODO implement sorting
                 }
             }
 

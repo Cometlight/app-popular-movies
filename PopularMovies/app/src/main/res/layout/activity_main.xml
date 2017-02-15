@@ -4,7 +4,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.scheffknecht.daniel.popularmovies.activities.MainActivity">
+    tools:context="com.scheffknecht.daniel.popularmovies.activities.MovieOverviewActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_movies"
