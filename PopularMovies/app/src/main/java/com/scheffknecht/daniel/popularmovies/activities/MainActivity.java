@@ -3,11 +3,17 @@ package com.scheffknecht.daniel.popularmovies.activities;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.scheffknecht.daniel.popularmovies.R;
 import com.scheffknecht.daniel.popularmovies.general.AsyncCallback;
@@ -20,6 +26,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private TextView errorMessageDisplay;
     private ProgressBar loadingIndicator;
+    private Spinner sortingSpinner;
 
     private RecyclerView recyclerView;
     private MovieAdapter movieAdapter;
@@ -71,5 +78,35 @@ public class MainActivity extends AppCompatActivity {
     private void showMovieData() {
         recyclerView.setVisibility(View.VISIBLE);
         errorMessageDisplay.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.overview, menu);
+
+        MenuItem item = menu.findItem(R.id.spinner_sort);
+        sortingSpinner = (Spinner) item.getActionView();
+        initSortingSpinner();
+
+        return true;
+    }
+
+    private void initSortingSpinner() {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.spinner_options, android.R.layout.simple_spinner_dropdown_item);
+        sortingSpinner.setAdapter(adapter);
+        sortingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) /* sort by popularity */ {
+                    Toast.makeText(MainActivity.this, "Sorting by Popularity", Toast.LENGTH_SHORT);// TODO
+                } else /* sort by rating */ {
+                    Toast.makeText(MainActivity.this, "Sorting by Rating", Toast.LENGTH_SHORT);//TODO
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
     }
 }

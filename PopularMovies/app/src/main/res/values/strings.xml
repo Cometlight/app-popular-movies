@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Popular Movies</string>
     <string name="error_load_movies">Failed to load movies.</string>
+    <string name="sort_movies_spinner">Sort Movies</string>
+    <string-array name="spinner_options">
+        <item>Sort by Popularity</item>
+        <item>Sort by Rating</item>
+    </string-array>
 </resources>
