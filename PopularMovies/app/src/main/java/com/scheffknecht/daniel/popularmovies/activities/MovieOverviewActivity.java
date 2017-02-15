@@ -1,9 +1,11 @@
 package com.scheffknecht.daniel.popularmovies.activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,15 +22,20 @@ import com.scheffknecht.daniel.popularmovies.models.Movie;
 import com.scheffknecht.daniel.popularmovies.network.FetchPopularMoviesTask;
 import com.scheffknecht.daniel.popularmovies.views.adapters.MovieAdapter;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class MovieOverviewActivity extends AppCompatActivity {
+public class MovieOverviewActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
     private TextView errorMessageDisplay;
     private ProgressBar loadingIndicator;
+    private MenuItem menuItemSortingSpinner;
     private Spinner sortingSpinner;
 
     private RecyclerView recyclerView;
     private MovieAdapter movieAdapter;
+
+    private boolean isShowingMovieData = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +50,8 @@ public class MovieOverviewActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
-        movieAdapter = new MovieAdapter();
+        movieAdapter = new MovieAdapter(this);
+        movieAdapter.setHasStableIds(true);
         recyclerView.setAdapter(movieAdapter);
 
         fetchMovieData();
@@ -70,21 +78,28 @@ public class MovieOverviewActivity extends AppCompatActivity {
     }
 
     private void showErrorMessage() {
+        isShowingMovieData = false;
         recyclerView.setVisibility(View.INVISIBLE);
         errorMessageDisplay.setVisibility(View.VISIBLE);
+        if (menuItemSortingSpinner != null)
+            menuItemSortingSpinner.setVisible(false);
     }
 
     private void showMovieData() {
+        isShowingMovieData = true;
         recyclerView.setVisibility(View.VISIBLE);
         errorMessageDisplay.setVisibility(View.INVISIBLE);
+        if (menuItemSortingSpinner != null)
+            menuItemSortingSpinner.setVisible(true);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.overview, menu);
 
-        MenuItem item = menu.findItem(R.id.spinner_sort);
-        sortingSpinner = (Spinner) item.getActionView();
+        menuItemSortingSpinner = menu.findItem(R.id.spinner_sort);
+        menuItemSortingSpinner.setVisible(isShowingMovieData);
+        sortingSpinner = (Spinner) menuItemSortingSpinner.getActionView();
         initSortingSpinner();
 
         return true;
@@ -97,15 +112,46 @@ public class MovieOverviewActivity extends AppCompatActivity {
         sortingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                List<Movie> movies = movieAdapter.getMovies();
                 if (position == 0) /* sort by popularity */ {
-                    Toast.makeText(MovieOverviewActivity.this, "Sorting by Popularity", Toast.LENGTH_SHORT);// TODO implement sorting
+                    movies = sortByPopularity(movies);
                 } else /* sort by rating */ {
-                    Toast.makeText(MovieOverviewActivity.this, "Sorting by Rating", Toast.LENGTH_SHORT);//TODO implement sorting
+                    movies = sortByRating(movies);
                 }
+                movieAdapter.setMovieData(movies);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
+    }
+
+    @Override
+    public void onClick(Movie movie) {
+        Intent movieDetailIntent = new Intent(this, MovieDetailActivity.class);
+        movieDetailIntent.putExtra("movie", movie);
+        startActivity(movieDetailIntent);
+    }
+
+    private List<Movie> sortByPopularity(List<Movie> movies) {
+        // movies.sort() available only starting with api level 24
+        Collections.sort(movies, new Comparator<Movie>() {
+            @Override
+            public int compare(Movie m1, Movie m2) {
+                return m2.getPopularity().compareTo(m1.getPopularity());
+            }
+        });
+        return movies;
+    }
+
+    private List<Movie> sortByRating(List<Movie> movies) {
+        // movies.sort() available only starting with api level 24
+        Collections.sort(movies, new Comparator<Movie>() {
+            @Override
+            public int compare(Movie m1, Movie m2) {
+                return m2.getVoteAverage().compareTo(m1.getVoteAverage());
+            }
+        });
+        return movies;
     }
 }

@@ -1,5 +1,7 @@
 package com.scheffknecht.daniel.popularmovies.network;
 
+import com.scheffknecht.daniel.popularmovies.models.Movie;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -35,5 +37,11 @@ public class NetworkUtils {
         } finally {
             urlConnection.disconnect();
         }
+    }
+
+    public static String getImageUrl(Movie movie) {
+        String imageWidth = "w185"; // possible: w92, w154, w185, w342, w500, w780, original
+        String url = "http://image.tmdb.org/t/p/" + imageWidth + "/" + movie.getPosterPath();
+        return url;
     }
 }

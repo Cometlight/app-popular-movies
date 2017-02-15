@@ -1,5 +1,8 @@
 package com.scheffknecht.daniel.popularmovies.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
@@ -7,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by Daniel on 14.02.2017.
  */
 
-public class Movie {
+public class Movie implements Parcelable {
     @SerializedName("poster_path")
     private String posterPath;
     private Boolean adult;
@@ -43,9 +46,57 @@ public class Movie {
         this.voteAverage = voteAverage;
     }
 
+    private Movie(Parcel in) {
+        posterPath = in.readString();
+        adult = (Boolean) in.readValue(null);
+        overview = in.readString();
+        releaseDate = in.readString();
+        id = in.readInt();
+        originalTitle= in.readString();
+        originalLanguage = in.readString();
+        backdropPath = in.readString();
+        popularity = in.readFloat();
+        voteCount = in.readInt();
+        voteAverage = in.readFloat();
+    }
+
     public static Movie fromJson(String json) {
         return new Gson().fromJson(json, Movie.class);
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeString(posterPath);
+        out.writeValue(adult);
+        out.writeString(overview);
+        out.writeString(releaseDate);
+        out.writeInt(id);
+        out.writeString(originalTitle);
+        out.writeString(originalLanguage);
+        out.writeString(backdropPath);
+        out.writeFloat(popularity);
+        out.writeInt(voteCount);
+        out.writeFloat(voteAverage);
+    }
+
+    public static final Parcelable.Creator<Movie> CREATOR
+            = new Parcelable.Creator<Movie>() {
+
+        @Override
+        public Movie createFromParcel(Parcel source) {
+            return new Movie(source);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 
     public String getPosterPath() {
         return posterPath;
