@@ -1,11 +1,12 @@
 package com.scheffknecht.daniel.popularmovies.activities;
 
 import android.content.Intent;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,19 +15,19 @@ import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.scheffknecht.daniel.popularmovies.R;
-import com.scheffknecht.daniel.popularmovies.general.AsyncCallback;
 import com.scheffknecht.daniel.popularmovies.models.Movie;
-import com.scheffknecht.daniel.popularmovies.network.FetchPopularMoviesTask;
+import com.scheffknecht.daniel.popularmovies.network.FetchPopularMoviesLoader;
 import com.scheffknecht.daniel.popularmovies.views.adapters.MovieAdapter;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class MovieOverviewActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
+public class MovieOverviewActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler, LoaderManager.LoaderCallbacks<List<Movie>> {
+    private final static int MOVIE_LIST_LOADER = 1;
+
     private TextView errorMessageDisplay;
     private ProgressBar loadingIndicator;
     private MenuItem menuItemSortingSpinner;
@@ -58,23 +59,13 @@ public class MovieOverviewActivity extends AppCompatActivity implements MovieAda
     }
 
     private void fetchMovieData() {
-        new FetchPopularMoviesTask(new AsyncCallback<List<Movie>>() {
-            @Override
-            public void onPreExecute() {
-                loadingIndicator.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onPostExecute(List<Movie> result) {
-                loadingIndicator.setVisibility(View.INVISIBLE);
-                if (result != null && result.size() > 0) {
-                    movieAdapter.setMovieData(result);
-                    showMovieData();
-                } else {
-                    showErrorMessage();
-                }
-            }
-        }).execute();
+        LoaderManager loaderManager = getSupportLoaderManager();
+        Loader<List<Movie>> movieListLoader = loaderManager.getLoader(MOVIE_LIST_LOADER);
+        if (movieListLoader == null) {
+            loaderManager.initLoader(MOVIE_LIST_LOADER, null, this);
+        } else {
+            loaderManager.restartLoader(MOVIE_LIST_LOADER, null, this);
+        }
     }
 
     private void showErrorMessage() {
@@ -154,4 +145,36 @@ public class MovieOverviewActivity extends AppCompatActivity implements MovieAda
         });
         return movies;
     }
+
+    @Override
+    public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
+        return new FetchPopularMoviesLoader(this) {
+            @Override
+            protected void onStartLoading() {
+                if (takeContentChanged()) {
+                    forceLoad();
+                    loadingIndicator.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            protected void onStopLoading() {
+                cancelLoad();
+            }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> data) {
+        loadingIndicator.setVisibility(View.INVISIBLE);
+        if (data != null && data.size() > 0) {
+            movieAdapter.setMovieData(data);
+            showMovieData();
+        } else {
+            showErrorMessage();
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Movie>> loader) {}
 }
